@@ -33,6 +33,6 @@ export async function GET(request: Request) {
       </div>
       <div style={{ position: "absolute", right: -100, top: -140, width: 420, height: 420, borderRadius: 999, background: "rgba(16,185,129,.16)" }} />
     </div>,
-    size
+    { width: 1200, height: 630 }
   );
 }
