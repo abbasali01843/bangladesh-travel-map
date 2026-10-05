@@ -2,7 +2,6 @@ import { ImageResponse } from "next/og";
 import { districts } from "../../../data/districts";
 
 export const runtime = "edge";
-export const contentType = "image/png";
 
 function level(count: number) {
   return count === 0 ? "নতুন পথিক" : count < 8 ? "ঘোরাঘুরি শুরু" : count < 20 ? "অভিজ্ঞ ভ্রমণকারী" : count < 40 ? "বাংলাদেশ ভ্রমণপাগল" : "দেশভ্রমণ কিংবদন্তি";
