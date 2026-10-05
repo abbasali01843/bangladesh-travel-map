@@ -2,4 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Arial,ui-sans-serif,system-ui,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Arial,ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button,input{font:inherit}
+button{-webkit-tap-highlight-color:transparent}
+::selection{background:#a7f3d0;color:#064e3b}
