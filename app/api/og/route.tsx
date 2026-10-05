@@ -30,7 +30,7 @@ export async function GET(request: Request) {
         <div style={{ marginTop: 10, fontSize: 22, color: "#94a3b8" }}>বাংলাদেশের কতটা ঘুরে দেখেছেন?</div>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", fontSize: 18, fontWeight: 700, color: "#64748b" }}>
-        <span>ghurechi.com</span>
+        <span>Ghurechi</span>
         <span>তুমি কয়টি ঘুরেছ?</span>
       </div>
       <div style={{ position: "absolute", right: -100, top: -140, width: 420, height: 420, borderRadius: 999, background: "rgba(16,185,129,.16)" }} />
