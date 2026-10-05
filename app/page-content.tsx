@@ -1,54 +1,200 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
-import { Share2, Trophy, MapPinned, Check, Search, Copy, RotateCcw, Download, Swords } from "lucide-react";
-import { BangladeshDistrictMap } from "./BangladeshDistrictMap";
-import { districts, divisions, type Division } from "../data/districts";
-import { ShareCard } from "./share-card";
+
+import { useEffect, useState } from "react";
 import { toPng } from "html-to-image";
+import { districts } from "../data/districts";
+import { getPercent } from "../lib/travel";
+import { Header } from "./components/Header";
+import { ScoreHero } from "./components/ScoreHero";
+import { MapSection } from "./components/MapSection";
+import { DistrictPicker } from "./components/DistrictPicker";
+import { Sidebar } from "./components/Sidebar";
+import { ShareModal } from "./components/ShareModal";
 import { Leaderboard } from "./leaderboard";
 
-export default function Home(){
- const [visited,setVisited]=useState<string[]>([]);
- const [mapOpen,setMapOpen]=useState(true);
- const [shareOpen,setShareOpen]=useState(false);
- const [copied,setCopied]=useState(false);
- const [downloading,setDownloading]=useState(false);
- const [challengeVisited,setChallengeVisited]=useState<string[]>([]);
- const [challengeCopied,setChallengeCopied]=useState(false);
- useEffect(()=>{try{const params=new URLSearchParams(location.search);const challenge=params.get("challenge");if(challenge){setChallengeVisited(challenge.split(",").filter(id=>districts.some(d=>d.id===id)))}const raw=params.get("v");if(raw&&!challenge){const ids=raw.split(",").filter(id=>districts.some(d=>d.id===id));setVisited(ids);return}const saved=localStorage.getItem("ghurechi-visited");if(saved)setVisited(JSON.parse(saved))}catch{}},[]);
- useEffect(()=>{try{localStorage.setItem("ghurechi-visited",JSON.stringify(visited));const url=new URL(location.href);if(visited.length){url.searchParams.set("v",visited.join(","))}else url.searchParams.delete("v");history.replaceState({}, "", url.toString())}catch{}},[visited]);
- const [active,setActive]=useState<Division|"সব">("সব");
- const [query,setQuery]=useState("");
- const toggle=(id:string)=>setVisited(v=>v.includes(id)?v.filter(x=>x!==id):[...v,id]);
- const filtered=useMemo(()=>districts.filter(d=>(active==="সব"||d.division===active)&&d.name.includes(query)),[active,query]);
- const percent=Math.round(visited.length/64*100);
- const shareUrl=typeof window!=="undefined"?window.location.href:"https://ghurechi.vercel.app/";
- const challengeUrl=typeof window!=="undefined"?`${window.location.origin}/?challenge=${encodeURIComponent(visited.join(","))}`:"https://ghurechi.vercel.app/";
- const challengePercent=Math.round(challengeVisited.length/64*100);
- const challengeResult=challengeVisited.length===visited.length?"সমান সমান! 🤝":visited.length>challengeVisited.length?"আপনি এগিয়ে! 🏆":"বন্ধু এগিয়ে! 🔥";
- const shareText=`আমি বাংলাদেশের ${visited.length}টি জেলা ঘুরেছি — ${percent}%! তুমি কয়টি ঘুরেছ? 🇧🇩`;
- const [installPrompt,setInstallPrompt]=useState<any>(null);
- useEffect(()=>{const handler=(e:any)=>{e.preventDefault();setInstallPrompt(e)};window.addEventListener("beforeinstallprompt",handler);return()=>window.removeEventListener("beforeinstallprompt",handler)},[]);
- const installApp=async()=>{if(!installPrompt)return;await installPrompt.prompt();setInstallPrompt(null)};
- const exportShareCard=async()=>{const node=document.getElementById("ghurechi-share-card");if(!node)return null;setDownloading(true);try{const dataUrl=await toPng(node,{pixelRatio:2,cacheBust:true});const blob=await (await fetch(dataUrl)).blob();const file=new File([blob],"ghurechi-travel-score.png",{type:"image/png"});if(navigator.share&&navigator.canShare?.({files:[file]})){await navigator.share({title:"Ghurechi — আমার Travel Score",text:shareText,url:shareUrl,files:[file]});return "shared"}const a=document.createElement("a");a.href=dataUrl;a.download="ghurechi-travel-score.png";a.click();return "downloaded"}catch{}finally{setDownloading(false)}return null};
- const divisionStats=useMemo(()=>divisions.map(d=>({name:d,total:districts.filter(x=>x.division===d).length,done:districts.filter(x=>x.division===d&&visited.includes(x.id)).length})),[visited]);
- const level=visited.length===0?"নতুন পথিক":visited.length<8?"ঘোরাঘুরি শুরু":visited.length<20?"অভিজ্ঞ ভ্রমণকারী":visited.length<40?"বাংলাদেশ ভ্রমণপাগল":"দেশভ্রমণ কিংবদন্তি";
- const badge=visited.length>=64?"🏆 বাংলাদেশজয়ী":visited.length>=40?"🔥 দেশভ্রমণ কিংবদন্তি":visited.length>=20?"🧭 ভ্রমণপাগল":visited.length>=8?"✈️ অভিজ্ঞ ভ্রমণকারী":"🌱 যাত্রা শুরু";
- const nextMilestone=visited.length<8?8:visited.length<20?20:visited.length<40?40:64;
- const remaining=Math.max(nextMilestone-visited.length,0);
- return <main className="min-h-screen bg-[#f7f8f5] text-slate-900">
-  <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5"><div><button onClick={()=>window.scrollTo({top:0,behavior:"smooth"})} className="text-left text-2xl font-black tracking-tight">Ghurechi<span className="text-emerald-600">.</span></button><div className="text-[11px] font-semibold text-slate-400">বাংলাদেশ ট্রাভেল ম্যাপ</div></div><div className="flex items-center gap-2">{installPrompt&&<button onClick={installApp} className="rounded-full bg-emerald-600 px-3 py-2 text-xs font-extrabold text-white">অ্যাপ ইনস্টল</button>}<div className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-extrabold"><span className="text-emerald-600">{visited.length}</span> / 64 জেলা</div></div></header>
-  <section className="mx-auto max-w-7xl px-5 pb-8 pt-10"><div className="grid items-end gap-8 md:grid-cols-[1fr_330px]"><div><div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700"><MapPinned size={14}/> MY TRAVEL MAP</div><h1 className="text-4xl font-black tracking-tight sm:text-6xl">বাংলাদেশের কতটা<br/><span className="text-emerald-600">ঘুরে দেখেছেন?</span></h1><p className="mt-4 max-w-xl leading-7 text-slate-500">আপনি যে ৬৪টি জেলা ঘুরেছেন সেগুলো টিক দিন। এক মিনিটেই আপনার Travel Score তৈরি করুন এবং বন্ধুদের Challenge দিন।</p></div><div className="rounded-3xl bg-slate-950 p-6 text-white shadow-xl"><div className="flex items-end justify-between"><div><div className="text-xs font-bold text-slate-400">TRAVEL SCORE</div><div className="mt-1 text-5xl font-black">{percent}%</div></div><div className="text-right text-sm text-slate-400">{visited.length} / 64</div></div><div className="mt-5 h-2 rounded-full bg-slate-800"><div className="h-2 rounded-full bg-emerald-500 transition-all" style={{width:`${Math.max(percent,1)}%`}}/></div><div className="mt-4 flex items-center justify-between gap-3"><div className="text-sm font-bold text-emerald-300">{level}</div><div className="text-xs font-bold text-slate-400">{badge}</div></div></div></div></section>
-  <section className="mx-auto max-w-7xl px-5 pb-5"><div className="overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6"><div className="mb-3 flex items-center justify-between"><div><h2 className="text-xl font-black">বাংলাদেশের মানচিত্র</h2><p className="text-sm text-slate-400">মানচিত্রের যেকোনো জেলায় চাপ দিয়ে ভ্রমণ স্ট্যাটাস বদলান</p></div><button onClick={()=>setMapOpen(v=>!v)} className="rounded-full bg-slate-100 px-3 py-2 text-xs font-bold text-slate-600">{mapOpen?"মানচিত্র ছোট করুন":"মানচিত্র দেখুন"}</button></div>{mapOpen&&<BangladeshDistrictMap visited={visited} onToggle={toggle}/>}</div></section>
-  <section className="mx-auto max-w-7xl px-5 pb-5"><Leaderboard visited={visited}/></section>
-  <section className="mx-auto grid max-w-7xl gap-5 px-5 pb-16 lg:grid-cols-[1fr_300px]">
-   <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-    <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><h2 className="text-xl font-black">৬৪ জেলা</h2><p className="text-sm text-slate-400">আপনি ঘুরেছেন এমন জেলা নির্বাচন করুন</p></div><div className="relative"><Search className="absolute left-3 top-3 text-slate-400" size={17}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="জেলা খুঁজুন..." className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-sm outline-none focus:border-emerald-400 sm:w-52"/></div></div>
-    <div className="mb-5 flex gap-2 overflow-x-auto pb-1">{["সব",...divisions].map(d=><button key={d} onClick={()=>setActive(d as Division|"সব")} className={`whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-bold transition ${active===d?"bg-slate-950 text-white":"bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>{d}</button>)}</div>
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">{filtered.map(d=>{const done=visited.includes(d.id);return <button key={d.id} onClick={()=>toggle(d.id)} className={`group flex items-center gap-2 rounded-2xl border p-3 text-left transition ${done?"border-emerald-400 bg-emerald-50":"border-slate-200 bg-slate-50 hover:border-emerald-300 hover:bg-white"}`}><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs font-black ${done?"bg-emerald-600 text-white":"bg-white text-slate-400"}`}>{done?<Check size={16}/>:d.name.slice(0,1)}</span><span className={`text-sm font-bold ${done?"text-emerald-800":"text-slate-700"}`}>{d.name}</span></button>})}</div>
-   </div>
-   <aside className="space-y-4">{challengeVisited.length>0&&<div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6"><div className="mb-4 flex items-center gap-2 text-sm font-black"><Swords size={18} className="text-emerald-600"/> Friend Challenge</div><div className="grid grid-cols-2 gap-2"><div className="rounded-2xl bg-white p-4"><div className="text-xs font-bold text-slate-400">আপনি</div><div className="mt-1 text-2xl font-black text-emerald-600">{visited.length}</div><div className="text-xs font-bold text-slate-400">{percent}%</div></div><div className="rounded-2xl bg-white p-4"><div className="text-xs font-bold text-slate-400">বন্ধু</div><div className="mt-1 text-2xl font-black">{challengeVisited.length}</div><div className="text-xs font-bold text-slate-400">{challengePercent}%</div></div></div><div className="mt-3 text-center text-sm font-black text-slate-800">{challengeResult}</div></div>}<div className="rounded-3xl border border-slate-200 bg-white p-6"><div className="mb-4 flex items-center gap-2 text-sm font-black"><Trophy size={18} className="text-amber-500"/> বিভাগভিত্তিক অগ্রগতি</div>{divisionStats.map(s=><div key={s.name} className="mb-4 last:mb-0"><div className="mb-1 flex justify-between text-xs font-bold"><span>{s.name}</span><span className="text-slate-400">{s.done}/{s.total}</span></div><div className="h-1.5 rounded-full bg-slate-100"><div className="h-1.5 rounded-full bg-emerald-500 transition-all" style={{width:`${s.total?s.done/s.total*100:0}%`}}/></div></div>)}</div><button onClick={async()=>{try{await navigator.clipboard.writeText(challengeUrl);setChallengeCopied(true);setTimeout(()=>setChallengeCopied(false),1800)}catch{}}} className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-4 font-extrabold text-slate-800">{challengeCopied?<><Check size={18}/> Challenge link কপি হয়েছে</>:<><Swords size={18}/> বন্ধুকে Challenge দিন</>}</button><button onClick={()=>setShareOpen(true)} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-5 py-4 font-extrabold text-white shadow-lg shadow-emerald-100"><Share2 size={18}/> আমার স্কোর শেয়ার করুন</button></aside>
-  </section>{shareOpen&&<div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-5" onClick={()=>setShareOpen(false)}><div className="w-full max-w-md rounded-3xl bg-white p-4 text-center shadow-2xl" onClick={e=>e.stopPropagation()}><div className="mb-3 text-sm font-black text-slate-900">আপনার Travel Score</div><div className="overflow-hidden rounded-2xl"><ShareCard visited={visited}/></div><button onClick={exportShareCard} className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 py-3 font-extrabold text-white">{downloading?<><Download size={17}/> তৈরি হচ্ছে...</>:<><Download size={17}/> ছবি শেয়ার / ডাউনলোড</>}</button><button onClick={async()=>{try{await navigator.clipboard.writeText(shareUrl);setCopied(true);setTimeout(()=>setCopied(false),1500)}catch{}}} className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 py-3 font-extrabold text-slate-700">{copied?<><Check size={17}/> কপি হয়েছে</>:<><Copy size={17}/> লিংক কপি করুন</>}</button><button onClick={()=>{setVisited([]);setShareOpen(false)}} className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl py-2 text-xs font-bold text-slate-400 hover:text-slate-700"><RotateCcw size={14}/> নতুন করে শুরু করুন</button></div></div>}
- <footer className="border-t border-slate-200 py-8 text-center text-sm text-slate-400">Ghurechi · বাংলাদেশের ট্রাভেল ম্যাপ</footer>
- </main>
+export default function Home() {
+  const [visited, setVisited] = useState<string[]>([]);
+  const [mapOpen, setMapOpen] = useState(true);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [challengeVisited, setChallengeVisited] = useState<string[]>([]);
+  const [challengeCopied, setChallengeCopied] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(location.search);
+      const challenge = params.get("challenge");
+      if (challenge) {
+        setChallengeVisited(
+          challenge.split(",").filter((id) => districts.some((d) => d.id === id))
+        );
+      }
+      const raw = params.get("v");
+      if (raw && !challenge) {
+        const ids = raw
+          .split(",")
+          .filter((id) => districts.some((d) => d.id === id));
+        setVisited(ids);
+        return;
+      }
+      const saved = localStorage.getItem("ghurechi-visited");
+      if (saved) setVisited(JSON.parse(saved));
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("ghurechi-visited", JSON.stringify(visited));
+      const url = new URL(location.href);
+      if (visited.length) {
+        url.searchParams.set("v", visited.join(","));
+      } else {
+        url.searchParams.delete("v");
+      }
+      history.replaceState({}, "", url.toString());
+    } catch {}
+  }, [visited]);
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const toggle = (id: string) =>
+    setVisited((v) =>
+      v.includes(id) ? v.filter((x) => x !== id) : [...v, id]
+    );
+
+  const selectAll = () => setVisited(districts.map((d) => d.id));
+  const clearAll = () => setVisited([]);
+
+  const shareUrl =
+    typeof window !== "undefined"
+      ? window.location.href
+      : "https://ghurechi.vercel.app/";
+
+  const challengeUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/?challenge=${encodeURIComponent(visited.join(","))}`
+      : "https://ghurechi.vercel.app/";
+
+  const percent = getPercent(visited.length);
+  const shareText = `আমি বাংলাদেশের ${visited.length}টি জেলা ঘুরেছি — ${percent}%! তুমি কয়টি ঘুরেছ? 🇧🇩`;
+
+  const installApp = async () => {
+    if (!installPrompt) return;
+    await installPrompt.prompt();
+    setInstallPrompt(null);
+  };
+
+  const exportShareCard = async () => {
+    const node = document.getElementById("ghurechi-share-card");
+    if (!node) return;
+    setDownloading(true);
+    try {
+      const dataUrl = await toPng(node, { pixelRatio: 2, cacheBust: true });
+      const blob = await (await fetch(dataUrl)).blob();
+      const file = new File([blob], "ghurechi-travel-score.png", {
+        type: "image/png",
+      });
+
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          title: "Ghurechi — আমার Travel Score",
+          text: shareText,
+          url: shareUrl,
+          files: [file],
+        });
+      } else {
+        const a = document.createElement("a");
+        a.href = dataUrl;
+        a.download = "ghurechi-travel-score.png";
+        a.click();
+      }
+    } catch {
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const copyChallenge = async () => {
+    try {
+      await navigator.clipboard.writeText(challengeUrl);
+      setChallengeCopied(true);
+      setTimeout(() => setChallengeCopied(false), 1800);
+    } catch {}
+  };
+
+  const copyShareLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {}
+  };
+
+  return (
+    <main className="min-h-screen bg-[#f7f8f5] text-slate-900">
+      <Header
+        visitedCount={visited.length}
+?}
+        installPrompt={installPrompt}
+        onInstall={installApp}
+      />
+
+      <ScoreHero visitedCount={visited.length} />
+
+      <MapSection
+        visited={visited}
+        mapOpen={mapOpen}
+        onToggleMap={() => setMapOpen((v) => !v)}
+        onToggleDistrict={toggle}
+      />
+
+      <section className="mx-auto max-w-7xl px-4 pb-5 sm:px-5">
+        <Leaderboard visited={visited} />
+      </section>
+
+      <section className="mx-auto grid max-w-7xl gap-5 px-4 pb-16 sm:px-5 lg:grid-cols-[1fr_300px]">
+        <DistrictPicker
+          visited={visited}
+          onToggle={toggle}
+          onSelectAll={selectAll}
+          onClearAll={clearAll}
+        />
+        <Sidebar
+          visited={visited}
+          challengeVisited={challengeVisited}
+          challengeCopied={challengeCopied}
+          onCopyChallenge={copyChallenge}
+          onOpenShare={() => setShareOpen(true)}
+        />
+      </section>
+
+      {shareOpen && (
+        <ShareModal
+          visited={visited}
+          downloading={downloading}
+          copied={copied}
+          onClose={() => setShareOpen(false)}
+          onExport={exportShareCard}
+          onCopyLink={copyShareLink}
+          onReset={() => {
+            setVisited([]);
+            setShareOpen(false);
+          }}
+        />
+      )}
+
+      <footer className="border-t border-slate-200 py-8 text-center text-sm text-slate-400">
+        Ghurechi · বাংলাদেশের ট্রাভেল ম্যাপ
+      </footer>
+    </main>
+  );
 }
