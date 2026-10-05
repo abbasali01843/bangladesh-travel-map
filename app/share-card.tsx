@@ -1,7 +1,63 @@
 "use client";
-export function ShareCard({visited}:{visited:string[]}){
- const percent=Math.round(visited.length/64*100);
- const level=visited.length===0?"নতুন পথিক":visited.length<8?"ঘোরাঘুরি শুরু":visited.length<20?"অভিজ্ঞ ভ্রমণকারী":visited.length<40?"বাংলাদেশ ভ্রমণপাগল":"দেশভ্রমণ কিংবদন্তি";
- const badge=visited.length>=64?"🏆 বাংলাদেশজয়ী":visited.length>=40?"🔥 দেশভ্রমণ কিংবদন্তি":visited.length>=20?"🧭 ভ্রমণপাগল":visited.length>=8?"✈️ অভিজ্ঞ ভ্রমণকারী":"🌱 যাত্রা শুরু";
- return <div id="ghurechi-share-card" className="relative mx-auto aspect-[1.91/1] w-full max-w-[760px] overflow-hidden rounded-[32px] bg-slate-950 p-8 text-white shadow-2xl sm:p-10"><div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl"/><div className="relative flex h-full flex-col justify-between"><div className="flex items-start justify-between"><div><div className="text-2xl font-black">Ghurechi<span className="text-emerald-400">.</span></div><div className="mt-1 text-xs font-bold tracking-widest text-slate-400">BANGLADESH TRAVEL MAP</div></div><div className="flex items-center gap-2"><div className="rounded-full border border-white/10 px-3 py-2 text-xs font-bold">{badge}</div><div className="hidden rounded-full border border-white/10 px-3 py-2 text-xs font-bold sm:block">{level}</div></div></div><div><div className="text-7xl font-black tracking-tight text-emerald-400 sm:text-8xl">{percent}%</div><div className="mt-1 text-xl font-extrabold">{visited.length} / 64 জেলা ঘুরেছি</div><div className="mt-2 text-xs font-bold text-emerald-300">{visited.length===64?"সব ৬৪ জেলা! বাংলাদেশজয়ী।":visited.length>=40?"আর একটু—৬৪ জেলার কাছাকাছি!":visited.length>=20?"ভ্রমণ এখন জমে গেছে!":"আরও জেলা ঘুরে স্কোর বাড়ান।"}</div><div className="mt-2 text-sm text-slate-400">বাংলাদেশের কতটা ঘুরে দেখেছেন?</div></div><div className="flex items-center justify-between text-xs font-bold text-slate-500"><span>ghurechi</span><span>তুমি কয়টি ঘুরেছ?</span></div></div></div>;
+
+import { getLevel, getMotivationalText, getPercent } from "../lib/travel";
+
+type ShareCardProps = {
+  visited: string[];
+};
+
+export function ShareCard({ visited }: ShareCardProps) {
+  const percent = getPercent(visited.length);
+  const { title, badge } = getLevel(visited.length);
+  const message = getMotivationalText(visited.length);
+
+  return (
+    <div
+      id="ghurechi-share-card"
+      className="relative mx-auto aspect-[1.91/1] w-full max-w-[760px] overflow-hidden rounded-[28px] bg-slate-950 p-7 text-white shadow-2xl sm:rounded-[32px] sm:p-10"
+    >
+      <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl" />
+
+      <div className="relative flex h-full flex-col justify-between">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className="text-xl font-black sm:text-2xl">
+              Ghurechi<span className="text-emerald-400">.</span>
+            </div>
+            <div className="mt-1 text-[10px] font-bold tracking-[0.2em] text-slate-400 sm:text-xs">
+              BANGLADESH TRAVEL MAP
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <div className="rounded-full border border-white/10 px-3 py-1.5 text-[10px] font-bold sm:text-xs">
+              {badge}
+            </div>
+            <div className="hidden rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold sm:block">
+              {title}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div className="text-6xl font-black tracking-tight text-emerald-400 sm:text-8xl">
+            {percent}%
+          </div>
+          <div className="mt-1 text-lg font-extrabold sm:text-xl">
+            {visited.length} / 64 জেলা ঘুরেছি
+          </div>
+          <div className="mt-2 text-xs font-bold text-emerald-300 sm:text-sm">
+            {message}
+          </div>
+          <div className="mt-1.5 text-sm text-slate-400">
+            বাংলাদেশের কতটা ঘুরে দেখেছেন?
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 sm:text-xs">
+          <span>ghurechi.vercel.app</span>
+          <span>তুমি কয়টি ঘুরেছ?</span>
+        </div>
+      </div>
+    </div>
+  );
 }
