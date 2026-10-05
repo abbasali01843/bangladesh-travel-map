@@ -18,7 +18,7 @@ const mapItems= districts.map(d=>{const name=resolveDistrict(EN[d.id]); if(name)
 export function BangladeshDistrictMap({visited,onToggle}:{visited:string[];onToggle:(id:string)=>void}){
  const selected=visited.map(id=>resolveDistrict(EN[id])).filter(Boolean) as ValidDistrict[];
  return <div className="ghurechi-map">
-  <Manchitro items={mapItems} value={selected[0]??null} onSelect={(name)=>{const id=idByMapName.get(name);if(id)onToggle(id)}} colors={{base:"#e8eeeb",active:"#b7dfd0",selected:"#059669",stroke:"#ffffff",selectedStroke:"#064e3b"}} className="w-full" svgStyle={{width:"100%",height:"auto",maxHeight:"680px"}} />
+  <Manchitro items={mapItems} value={selected[selected.length-1]??null} onSelect={(name)=>{const id=idByMapName.get(name);if(id)onToggle(id)}} colors={{base:"#e8eeeb",active:"#b7dfd0",selected:"#059669",stroke:"#ffffff",selectedStroke:"#064e3b"}} className="w-full" svgStyle={{width:"100%",height:"auto",maxHeight:"680px"}} />
   <div className="mt-3 flex flex-wrap justify-center gap-3 text-xs font-bold text-slate-500"><span><i className="mr-1 inline-block h-2.5 w-2.5 rounded-full bg-[#e8eeeb] align-middle"/>এখনও যাওয়া হয়নি</span><span><i className="mr-1 inline-block h-2.5 w-2.5 rounded-full bg-[#059669] align-middle"/>ঘুরে দেখেছেন</span></div>
  </div>;
 }
