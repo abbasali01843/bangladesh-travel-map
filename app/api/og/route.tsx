@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "58px 68px", background: "#020617", color: "white", fontFamily: "sans-serif" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 40, fontWeight: 900 }}>Ghurechi<span style={{ color: "#34d399" }}>.</span></div>
+          <div style={{ display: "flex", flexDirection: "row", fontSize: 40, fontWeight: 900 }}>Ghurechi<span style={{ color: "#34d399" }}>.</span></div>
           <div style={{ marginTop: 6, fontSize: 17, fontWeight: 700, letterSpacing: 4, color: "#94a3b8" }}>BANGLADESH TRAVEL MAP</div>
         </div>
         <div style={{ border: "1px solid #334155", borderRadius: 999, padding: "12px 20px", fontSize: 18, fontWeight: 800, color: "#cbd5e1" }}>{level(visited.length)}</div>
