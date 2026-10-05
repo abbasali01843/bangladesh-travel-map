@@ -143,7 +143,6 @@ export default function Home() {
     <main className="min-h-screen bg-[#f7f8f5] text-slate-900">
       <Header
         visitedCount={visited.length}
-?}
         installPrompt={installPrompt}
         onInstall={installApp}
       />
