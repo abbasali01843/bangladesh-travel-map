@@ -6,6 +6,7 @@ import { getUnionDirectory } from "../../../lib/directory-live";
 export const revalidate = 3600;
 
 type Props = { params: Promise<{ slug: string }> };
+type AreaItem = { id: string; name: string; slug: string; type: string; parentAreaId: string | null; verificationLevel: string };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -22,8 +23,8 @@ export default async function UnionPage({ params }: Props) {
   const data = await getUnionDirectory(slug);
   if (!data) notFound();
 
-  const villages = data.areas.filter((area) => area.type === "VILLAGE");
-  const wards = data.areas.filter((area) => area.type === "WARD");
+  const villages = data.areas.filter((area: AreaItem) => area.type === "VILLAGE");
+  const wards = data.areas.filter((area: AreaItem) => area.type === "WARD");
 
   return (
     <main className="min-h-screen bg-[#f7f8f5] text-slate-900">
