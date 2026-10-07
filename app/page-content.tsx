@@ -5,7 +5,7 @@ import data from "../data/kanchana.json";
 import KanchanaMap from "./kanchana-map";
 import PwaRegister from "./pwa-register";
 
-type Tab = "overview" | "transport" | "education" | "markets" | "emergency";
+type Tab = "overview" | "transport" | "education" | "markets" | "places" | "emergency";
 
 function Section({ title, children, id }: { title: string; children: React.ReactNode; id?: string }) {
   return (
@@ -33,6 +33,7 @@ export default function Home() {
     ["transport", "যাতায়াত"],
     ["education", "শিক্ষা"],
     ["markets", "হাট-বাজার"],
+    ["places", "স্থান"],
     ["emergency", "জরুরি নম্বর"]
   ] as const, []);
 
@@ -113,6 +114,22 @@ export default function Home() {
           {tab === "markets" && <Section title="হাট-বাজার">
             <div className="grid gap-3 sm:grid-cols-3">
               {data.markets.map(m => <div key={m.name} className="rounded-2xl border border-slate-200 p-4"><div className="flex items-start justify-between gap-2"><div className="font-black">{m.name}</div><Verified value={m.verified}/></div><div className="mt-2 text-xs text-slate-400">{m.area}</div>{m.note && <p className="mt-2 text-xs leading-6 text-amber-700">{m.note}</p>}</div>)}
+            </div>
+          </Section>}
+
+          {tab === "places" && <Section title="স্থান ও লোকাল সেবা">
+            <div className="space-y-5">
+              <div>
+                <div className="mb-2 text-xs font-black text-slate-400">ধর্মীয় স্থান</div>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {data.categories.religious_places.map((p) => <div key={p.name} className="rounded-2xl border border-slate-200 p-4"><div className="flex items-start justify-between gap-2"><div><div className="font-black">{p.name}</div><div className="mt-1 text-xs text-slate-400">{p.type}</div></div><Verified value={p.verified}/></div></div>)}
+                </div>
+              </div>
+              <div>
+                <div className="mb-2 text-xs font-black text-slate-400">ঐতিহাসিক/দর্শনীয় স্থান</div>
+                {data.categories.landmarks.map((p) => <div key={p.name} className="rounded-2xl border border-slate-200 p-4"><div className="flex items-start justify-between gap-2"><div><div className="font-black">{p.name}</div><div className="mt-1 text-xs text-slate-400">{p.type}</div></div><Verified value={p.verified}/></div></div>)}
+              </div>
+              <div className="rounded-2xl bg-slate-50 p-4 text-xs font-semibold leading-6 text-slate-500">স্বাস্থ্যকেন্দ্র ও সরকারি সেবার যাচাইযোগ্য তালিকা পাওয়া গেলে এই অংশে যুক্ত করা হবে। অনুমানভিত্তিক প্রতিষ্ঠান যোগ করা হয়নি।</div>
             </div>
           </Section>}
 
