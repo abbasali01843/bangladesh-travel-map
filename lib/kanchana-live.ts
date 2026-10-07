@@ -52,7 +52,7 @@ export async function getKanchanaLiveData(): Promise<SeedData> {
     .map((a) => {
       const wards = areas
         .filter((w) => w.type === "WARD" && w.parentAreaId === a.id)
-        .map((w) => Number((w.name.match(/\\d+/)?.[0] ?? "0")))
+        .map((w) => Number((w.name.match(/\d+/)?.[0] ?? "0")))
         .filter(Boolean)
         .sort((a, b) => a - b);
       return { id: a.slug, name: a.name, wards };
@@ -62,7 +62,7 @@ export async function getKanchanaLiveData(): Promise<SeedData> {
   const education = live
     .filter((s) => s.categoryId === "education")
     .map((s) => {
-      const eiin = s.description?.match(/EIIN[:\\s]+(\\d+)/i)?.[1];
+      const eiin = s.description?.match(/EIIN[:\s]+(\d+)/i)?.[1];
       return { name: s.name, verified: verified(s.verificationLevel), ...(eiin ? { eiin } : {}) };
     });
 
