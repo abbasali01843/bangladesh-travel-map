@@ -1,54 +1,139 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
-import { Share2, Trophy, MapPinned, Check, Search, Copy, RotateCcw, Download, Swords } from "lucide-react";
-import { BangladeshDistrictMap } from "./BangladeshDistrictMap";
-import { districts, divisions, type Division } from "../data/districts";
-import { ShareCard } from "./share-card";
-import { toPng } from "html-to-image";
-import { Leaderboard } from "./leaderboard";
 
-export default function Home(){
- const [visited,setVisited]=useState<string[]>([]);
- const [mapOpen,setMapOpen]=useState(true);
- const [shareOpen,setShareOpen]=useState(false);
- const [copied,setCopied]=useState(false);
- const [downloading,setDownloading]=useState(false);
- const [challengeVisited,setChallengeVisited]=useState<string[]>([]);
- const [challengeCopied,setChallengeCopied]=useState(false);
- useEffect(()=>{try{const params=new URLSearchParams(location.search);const challenge=params.get("challenge");if(challenge){setChallengeVisited(challenge.split(",").filter(id=>districts.some(d=>d.id===id)))}const raw=params.get("v");if(raw&&!challenge){const ids=raw.split(",").filter(id=>districts.some(d=>d.id===id));setVisited(ids);return}const saved=localStorage.getItem("ghurechi-visited");if(saved)setVisited(JSON.parse(saved))}catch{}},[]);
- useEffect(()=>{try{localStorage.setItem("ghurechi-visited",JSON.stringify(visited));const url=new URL(location.href);if(visited.length){url.searchParams.set("v",visited.join(","))}else url.searchParams.delete("v");history.replaceState({}, "", url.toString())}catch{}},[visited]);
- const [active,setActive]=useState<Division|"সব">("সব");
- const [query,setQuery]=useState("");
- const toggle=(id:string)=>setVisited(v=>v.includes(id)?v.filter(x=>x!==id):[...v,id]);
- const filtered=useMemo(()=>districts.filter(d=>(active==="সব"||d.division===active)&&d.name.includes(query)),[active,query]);
- const percent=Math.round(visited.length/64*100);
- const shareUrl=typeof window!=="undefined"?window.location.href:"https://ghurechi.vercel.app/";
- const challengeUrl=typeof window!=="undefined"?`${window.location.origin}/?challenge=${encodeURIComponent(visited.join(","))}`:"https://ghurechi.vercel.app/";
- const challengePercent=Math.round(challengeVisited.length/64*100);
- const challengeResult=challengeVisited.length===visited.length?"সমান সমান! 🤝":visited.length>challengeVisited.length?"আপনি এগিয়ে! 🏆":"বন্ধু এগিয়ে! 🔥";
- const shareText=`আমি বাংলাদেশের ${visited.length}টি জেলা ঘুরেছি — ${percent}%! তুমি কয়টি ঘুরেছ? 🇧🇩`;
- const [installPrompt,setInstallPrompt]=useState<any>(null);
- useEffect(()=>{const handler=(e:any)=>{e.preventDefault();setInstallPrompt(e)};window.addEventListener("beforeinstallprompt",handler);return()=>window.removeEventListener("beforeinstallprompt",handler)},[]);
- const installApp=async()=>{if(!installPrompt)return;await installPrompt.prompt();setInstallPrompt(null)};
- const exportShareCard=async()=>{const node=document.getElementById("ghurechi-share-card");if(!node)return null;setDownloading(true);try{const dataUrl=await toPng(node,{pixelRatio:2,cacheBust:true});const blob=await (await fetch(dataUrl)).blob();const file=new File([blob],"ghurechi-travel-score.png",{type:"image/png"});if(navigator.share&&navigator.canShare?.({files:[file]})){await navigator.share({title:"Ghurechi — আমার Travel Score",text:shareText,url:shareUrl,files:[file]});return "shared"}const a=document.createElement("a");a.href=dataUrl;a.download="ghurechi-travel-score.png";a.click();return "downloaded"}catch{}finally{setDownloading(false)}return null};
- const divisionStats=useMemo(()=>divisions.map(d=>({name:d,total:districts.filter(x=>x.division===d).length,done:districts.filter(x=>x.division===d&&visited.includes(x.id)).length})),[visited]);
- const level=visited.length===0?"নতুন পথিক":visited.length<8?"ঘোরাঘুরি শুরু":visited.length<20?"অভিজ্ঞ ভ্রমণকারী":visited.length<40?"বাংলাদেশ ভ্রমণপাগল":"দেশভ্রমণ কিংবদন্তি";
- const badge=visited.length>=64?"🏆 বাংলাদেশজয়ী":visited.length>=40?"🔥 দেশভ্রমণ কিংবদন্তি":visited.length>=20?"🧭 ভ্রমণপাগল":visited.length>=8?"✈️ অভিজ্ঞ ভ্রমণকারী":"🌱 যাত্রা শুরু";
- const nextMilestone=visited.length<8?8:visited.length<20?20:visited.length<40?40:64;
- const remaining=Math.max(nextMilestone-visited.length,0);
- return <main className="min-h-screen bg-[#f7f8f5] text-slate-900">
-  <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5"><div><button onClick={()=>window.scrollTo({top:0,behavior:"smooth"})} className="text-left text-2xl font-black tracking-tight">Ghurechi<span className="text-emerald-600">.</span></button><div className="text-[11px] font-semibold text-slate-400">বাংলাদেশ ট্রাভেল ম্যাপ</div></div><div className="flex items-center gap-2">{installPrompt&&<button onClick={installApp} className="rounded-full bg-emerald-600 px-3 py-2 text-xs font-extrabold text-white">অ্যাপ ইনস্টল</button>}<div className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-extrabold"><span className="text-emerald-600">{visited.length}</span> / 64 জেলা</div></div></header>
-  <section className="mx-auto max-w-7xl px-5 pb-8 pt-10"><div className="grid items-end gap-8 md:grid-cols-[1fr_330px]"><div><div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700"><MapPinned size={14}/> MY TRAVEL MAP</div><h1 className="text-4xl font-black tracking-tight sm:text-6xl">বাংলাদেশের কতটা<br/><span className="text-emerald-600">ঘুরে দেখেছেন?</span></h1><p className="mt-4 max-w-xl leading-7 text-slate-500">আপনি যে ৬৪টি জেলা ঘুরেছেন সেগুলো টিক দিন। এক মিনিটেই আপনার Travel Score তৈরি করুন এবং বন্ধুদের Challenge দিন।</p></div><div className="rounded-3xl bg-slate-950 p-6 text-white shadow-xl"><div className="flex items-end justify-between"><div><div className="text-xs font-bold text-slate-400">TRAVEL SCORE</div><div className="mt-1 text-5xl font-black">{percent}%</div></div><div className="text-right text-sm text-slate-400">{visited.length} / 64</div></div><div className="mt-5 h-2 rounded-full bg-slate-800"><div className="h-2 rounded-full bg-emerald-500 transition-all" style={{width:`${Math.max(percent,1)}%`}}/></div><div className="mt-4 flex items-center justify-between gap-3"><div className="text-sm font-bold text-emerald-300">{level}</div><div className="text-xs font-bold text-slate-400">{badge}</div></div></div></div></section>
-  <section className="mx-auto max-w-7xl px-5 pb-5"><div className="overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6"><div className="mb-3 flex items-center justify-between"><div><h2 className="text-xl font-black">বাংলাদেশের মানচিত্র</h2><p className="text-sm text-slate-400">মানচিত্রের যেকোনো জেলায় চাপ দিয়ে ভ্রমণ স্ট্যাটাস বদলান</p></div><button onClick={()=>setMapOpen(v=>!v)} className="rounded-full bg-slate-100 px-3 py-2 text-xs font-bold text-slate-600">{mapOpen?"মানচিত্র ছোট করুন":"মানচিত্র দেখুন"}</button></div>{mapOpen&&<BangladeshDistrictMap visited={visited} onToggle={toggle}/>}</div></section>
-  <section className="mx-auto max-w-7xl px-5 pb-5"><Leaderboard visited={visited}/></section>
-  <section className="mx-auto grid max-w-7xl gap-5 px-5 pb-16 lg:grid-cols-[1fr_300px]">
-   <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-    <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><h2 className="text-xl font-black">৬৪ জেলা</h2><p className="text-sm text-slate-400">আপনি ঘুরেছেন এমন জেলা নির্বাচন করুন</p></div><div className="relative"><Search className="absolute left-3 top-3 text-slate-400" size={17}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="জেলা খুঁজুন..." className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-sm outline-none focus:border-emerald-400 sm:w-52"/></div></div>
-    <div className="mb-5 flex gap-2 overflow-x-auto pb-1">{["সব",...divisions].map(d=><button key={d} onClick={()=>setActive(d as Division|"সব")} className={`whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-bold transition ${active===d?"bg-slate-950 text-white":"bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>{d}</button>)}</div>
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">{filtered.map(d=>{const done=visited.includes(d.id);return <button key={d.id} onClick={()=>toggle(d.id)} className={`group flex items-center gap-2 rounded-2xl border p-3 text-left transition ${done?"border-emerald-400 bg-emerald-50":"border-slate-200 bg-slate-50 hover:border-emerald-300 hover:bg-white"}`}><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs font-black ${done?"bg-emerald-600 text-white":"bg-white text-slate-400"}`}>{done?<Check size={16}/>:d.name.slice(0,1)}</span><span className={`text-sm font-bold ${done?"text-emerald-800":"text-slate-700"}`}>{d.name}</span></button>})}</div>
-   </div>
-   <aside className="space-y-4">{challengeVisited.length>0&&<div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6"><div className="mb-4 flex items-center gap-2 text-sm font-black"><Swords size={18} className="text-emerald-600"/> Friend Challenge</div><div className="grid grid-cols-2 gap-2"><div className="rounded-2xl bg-white p-4"><div className="text-xs font-bold text-slate-400">আপনি</div><div className="mt-1 text-2xl font-black text-emerald-600">{visited.length}</div><div className="text-xs font-bold text-slate-400">{percent}%</div></div><div className="rounded-2xl bg-white p-4"><div className="text-xs font-bold text-slate-400">বন্ধু</div><div className="mt-1 text-2xl font-black">{challengeVisited.length}</div><div className="text-xs font-bold text-slate-400">{challengePercent}%</div></div></div><div className="mt-3 text-center text-sm font-black text-slate-800">{challengeResult}</div></div>}<div className="rounded-3xl border border-slate-200 bg-white p-6"><div className="mb-4 flex items-center gap-2 text-sm font-black"><Trophy size={18} className="text-amber-500"/> বিভাগভিত্তিক অগ্রগতি</div>{divisionStats.map(s=><div key={s.name} className="mb-4 last:mb-0"><div className="mb-1 flex justify-between text-xs font-bold"><span>{s.name}</span><span className="text-slate-400">{s.done}/{s.total}</span></div><div className="h-1.5 rounded-full bg-slate-100"><div className="h-1.5 rounded-full bg-emerald-500 transition-all" style={{width:`${s.total?s.done/s.total*100:0}%`}}/></div></div>)}</div><button onClick={async()=>{try{await navigator.clipboard.writeText(challengeUrl);setChallengeCopied(true);setTimeout(()=>setChallengeCopied(false),1800)}catch{}}} className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-4 font-extrabold text-slate-800">{challengeCopied?<><Check size={18}/> Challenge link কপি হয়েছে</>:<><Swords size={18}/> বন্ধুকে Challenge দিন</>}</button><button onClick={()=>setShareOpen(true)} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-5 py-4 font-extrabold text-white shadow-lg shadow-emerald-100"><Share2 size={18}/> আমার স্কোর শেয়ার করুন</button></aside>
-  </section>{shareOpen&&<div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-5" onClick={()=>setShareOpen(false)}><div className="w-full max-w-md rounded-3xl bg-white p-4 text-center shadow-2xl" onClick={e=>e.stopPropagation()}><div className="mb-3 text-sm font-black text-slate-900">আপনার Travel Score</div><div className="overflow-hidden rounded-2xl"><ShareCard visited={visited}/></div><button onClick={exportShareCard} className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 py-3 font-extrabold text-white">{downloading?<><Download size={17}/> তৈরি হচ্ছে...</>:<><Download size={17}/> ছবি শেয়ার / ডাউনলোড</>}</button><button onClick={async()=>{try{await navigator.clipboard.writeText(shareUrl);setCopied(true);setTimeout(()=>setCopied(false),1500)}catch{}}} className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 py-3 font-extrabold text-slate-700">{copied?<><Check size={17}/> কপি হয়েছে</>:<><Copy size={17}/> লিংক কপি করুন</>}</button><button onClick={()=>{setVisited([]);setShareOpen(false)}} className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl py-2 text-xs font-bold text-slate-400 hover:text-slate-700"><RotateCcw size={14}/> নতুন করে শুরু করুন</button></div></div>}
- <footer className="border-t border-slate-200 py-8 text-center text-sm text-slate-400">Ghurechi · বাংলাদেশের ট্রাভেল ম্যাপ</footer>
- </main>
+import { useMemo, useState } from "react";
+import data from "../data/kanchana.json";
+
+type Tab = "overview" | "transport" | "education" | "markets" | "emergency";
+
+function Section({ title, children, id }: { title: string; children: React.ReactNode; id?: string }) {
+  return (
+    <section id={id} className="scroll-mt-24 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <h2 className="mb-4 text-lg font-black text-slate-900">{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+function Pill({ children }: { children: React.ReactNode }) {
+  return <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-bold text-slate-600">{children}</span>;
+}
+
+function Verified({ value }: { value?: boolean }) {
+  return <span className={`rounded-full px-2 py-1 text-[10px] font-extrabold ${value ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{value ? "উৎস যাচাই" : "পুনঃযাচাই বাকি"}</span>;
+}
+
+export default function Home() {
+  const [tab, setTab] = useState<Tab>("overview");
+  const [query, setQuery] = useState("");
+
+  const tabs = useMemo(() => [
+    ["overview", "সারসংক্ষেপ"],
+    ["transport", "যাতায়াত"],
+    ["education", "শিক্ষা"],
+    ["markets", "হাট-বাজার"],
+    ["emergency", "জরুরি নম্বর"]
+  ] as const, []);
+
+  const schools = [...data.education.secondary, ...data.education.madrasas, ...data.education.primary.map(name => ({ name, verified: false }))];
+  const filteredSchools = schools.filter((item) => item.name.includes(query));
+
+  return (
+    <main className="min-h-screen bg-[#f7f8f5] text-slate-900">
+      <header className="sticky top-0 z-30 border-b border-slate-200 bg-[#f7f8f5]/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+          <div>
+            <div className="text-2xl font-black tracking-tight">বাংলাদেশ লোকাল ডিরেক্টরি<span className="text-emerald-600">.</span></div>
+            <div className="text-[11px] font-bold text-slate-400">Hyper-Local Pilot · Phase 1</div>
+          </div>
+          <div className="rounded-full bg-slate-950 px-3 py-2 text-xs font-extrabold text-white">পাইলট: {data.name}</div>
+        </div>
+      </header>
+
+      <section className="mx-auto max-w-7xl px-4 pb-6 pt-8 sm:px-6">
+        <div className="rounded-[2rem] bg-slate-950 p-6 text-white sm:p-8">
+          <div className="mb-3 flex flex-wrap gap-2">
+            <Pill>{data.division} বিভাগ</Pill><Pill>{data.district} জেলা</Pill><Pill>{data.upazila} উপজেলা</Pill><Pill>৪নং ইউনিয়ন</Pill>
+          </div>
+          <h1 className="text-3xl font-black sm:text-5xl">{data.name}</h1>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
+            গ্রাম, ওয়ার্ড, যাতায়াত, শিক্ষা, বাজার, দর্শনীয় স্থান ও জরুরি সেবা—এক জায়গায় সাজানো কাঞ্চনা পাইলট ডিরেক্টরি।
+          </p>
+          <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <div className="rounded-2xl bg-white/10 p-4"><div className="text-2xl font-black">৩</div><div className="text-xs font-bold text-slate-300">গ্রাম</div></div>
+            <div className="rounded-2xl bg-white/10 p-4"><div className="text-2xl font-black">৯</div><div className="text-xs font-bold text-slate-300">ওয়ার্ড</div></div>
+            <div className="rounded-2xl bg-white/10 p-4"><div className="text-2xl font-black">৩</div><div className="text-xs font-bold text-slate-300">প্রধান বাজার</div></div>
+            <div className="rounded-2xl bg-white/10 p-4"><div className="text-2xl font-black">{data.emergency_numbers.length}</div><div className="text-xs font-bold text-slate-300">জরুরি নম্বর</div></div>
+          </div>
+        </div>
+      </section>
+
+      <nav className="mx-auto max-w-7xl overflow-x-auto px-4 pb-5 sm:px-6">
+        <div className="flex min-w-max gap-2">
+          {tabs.map(([id, label]) => (
+            <button key={id} onClick={() => setTab(id)} className={`rounded-full px-4 py-2.5 text-xs font-extrabold transition ${tab === id ? "bg-emerald-600 text-white" : "bg-white text-slate-600 border border-slate-200"}`}>{label}</button>
+          ))}
+        </div>
+      </nav>
+
+      <section className="mx-auto grid max-w-7xl gap-4 px-4 pb-12 sm:px-6 lg:grid-cols-[1fr_320px]">
+        <div className="space-y-4">
+          {tab === "overview" && <>
+            <Section title="গ্রাম ও ওয়ার্ড">
+              <div className="grid gap-3 sm:grid-cols-3">
+                {data.villages.map(v => <div key={v.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div className="font-black">{v.name}</div><div className="mt-2 flex flex-wrap gap-1.5">{v.wards.map(w => <Pill key={w}>ওয়ার্ড {String(w).padStart(2, "0")}</Pill>)}</div></div>)}
+              </div>
+            </Section>
+            <Section title="কিছু গুরুত্বপূর্ণ তথ্য">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl bg-emerald-50 p-4"><div className="text-xs font-bold text-emerald-700">পোস্ট কোড</div><div className="mt-1 text-2xl font-black text-emerald-900">{data.postal_code}</div></div>
+                <div className="rounded-2xl bg-slate-100 p-4"><div className="text-xs font-bold text-slate-500">মৌজা</div><div className="mt-1 text-xl font-black">কাঞ্চনা মৌজা</div></div>
+              </div>
+              <p className="mt-4 text-sm leading-7 text-slate-500">{data.verification_note}</p>
+            </Section>
+          </>}
+
+          {tab === "transport" && <Section title="যাতায়াত ও প্রধান সড়ক">
+            <div className="space-y-3">
+              <div className="rounded-2xl bg-slate-50 p-4 text-sm leading-7 text-slate-600">{data.transport.upazila_hq}</div>
+              {data.transport.main_roads.map((r) => <div key={r.name} className="rounded-2xl border border-slate-200 p-4"><div className="flex items-start justify-between gap-3"><div className="font-black">{r.name}</div><Verified value={r.verified}/></div>{r.note && <p className="mt-2 text-xs leading-6 text-slate-500">{r.note}</p>}</div>)}
+              {data.transport.bridge_waterways.map((r) => <div key={r.name} className="rounded-2xl border border-slate-200 p-4"><div className="font-black">{r.name}</div><p className="mt-2 text-xs leading-6 text-slate-500">{r.note}</p></div>)}
+            </div>
+          </Section>}
+
+          {tab === "education" && <Section title="শিক্ষা প্রতিষ্ঠান">
+            <div className="mb-4"><input value={query} onChange={e => setQuery(e.target.value)} placeholder="প্রতিষ্ঠানের নাম খুঁজুন..." className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"/></div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {filteredSchools.map((s, i) => <div key={i} className="rounded-2xl border border-slate-200 bg-white p-4"><div className="flex items-start justify-between gap-3"><div><div className="font-extrabold">{s.name}</div>{"eiin" in s && s.eiin && <div className="mt-1 text-[11px] font-bold text-slate-400">EIIN {s.eiin}</div>}</div><Verified value={"verified" in s ? s.verified : false}/></div></div>)}
+            </div>
+            <div className="mt-4 rounded-2xl bg-amber-50 p-4 text-xs font-semibold leading-6 text-amber-800">{data.education.primary_verification}</div>
+          </Section>}
+
+          {tab === "markets" && <Section title="হাট-বাজার">
+            <div className="grid gap-3 sm:grid-cols-3">
+              {data.markets.map(m => <div key={m.name} className="rounded-2xl border border-slate-200 p-4"><div className="flex items-start justify-between gap-2"><div className="font-black">{m.name}</div><Verified value={m.verified}/></div><div className="mt-2 text-xs text-slate-400">{m.area}</div>{m.note && <p className="mt-2 text-xs leading-6 text-amber-700">{m.note}</p>}</div>)}
+            </div>
+          </Section>}
+
+          {tab === "emergency" && <Section title="জরুরি সেবা">
+            <div className="grid gap-2 sm:grid-cols-2">
+              {data.emergency_numbers.map(item => <a key={item.name + item.number} href={`tel:${item.number}`} className="rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-emerald-300"><div className="flex items-start justify-between gap-3"><div><div className="font-black">{item.name}</div><div className="mt-1 text-xs text-slate-400">{item.type}</div></div><div className="text-xl font-black text-emerald-600">{item.number}</div></div></a>)}
+            </div>
+          </Section>}
+        </div>
+
+        <aside className="space-y-4">
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="text-xs font-black text-slate-400">DATA STATUS</div>
+            <div className="mt-2 flex items-center justify-between"><span className="font-black">is_published</span><span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-black text-emerald-700">{String(data.is_published)}</span></div>
+            <div className="mt-3 text-xs leading-6 text-slate-500">কাঞ্চনা এখন পাইলট হিসেবে দৃশ্যমান। যেসব এন্ট্রি পুনঃযাচাই দরকার, সেগুলো আলাদা করে চিহ্নিত করা আছে।</div>
+          </div>
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="text-sm font-black">ডেটা সোর্স</div>
+            <div className="mt-3 space-y-2">{data.sources.slice(0,6).map(s => <a key={s.url} href={s.url} target="_blank" rel="noreferrer" className="block text-xs font-bold leading-5 text-emerald-700 hover:underline">{s.title}</a>)}</div>
+          </div>
+        </aside>
+      </section>
+      <footer className="border-t border-slate-200 py-8 text-center text-xs font-bold text-slate-400">বাংলাদেশ লোকাল ডিরেক্টরি · কাঞ্চনা পাইলট · Phase 1</footer>
+    </main>
+  );
 }
