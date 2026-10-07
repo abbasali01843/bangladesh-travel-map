@@ -67,7 +67,7 @@ export default function Home() {
         </div>
       </section>
 
-      <nav className="mx-auto max-w-7xl overflow-x-auto px-4 pb-5 sm:px-6">
+      <div className="mx-auto max-w-7xl px-4 pb-4 sm:px-6"><div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs font-semibold leading-6 text-amber-900">ℹ️ এই পাইলটের কিছু স্থানীয় তথ্য এখনও পুনঃযাচাই পর্যায়ে আছে। “পুনঃযাচাই বাকি” চিহ্নিত তথ্যকে চূড়ান্ত তথ্য হিসেবে ব্যবহার করবেন না।</div></div>\n\n      <nav className="mx-auto max-w-7xl overflow-x-auto px-4 pb-5 sm:px-6">
         <div className="flex min-w-max gap-2">
           {tabs.map(([id, label]) => (
             <button key={id} onClick={() => setTab(id)} className={`rounded-full px-4 py-2.5 text-xs font-extrabold transition ${tab === id ? "bg-emerald-600 text-white" : "bg-white text-slate-600 border border-slate-200"}`}>{label}</button>
