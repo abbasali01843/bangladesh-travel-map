@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import LogoutButton from "./logout-button";
 import ModerationQueue from "./moderation-queue";
+import VerificationPanel from "./verification-panel";
 
 async function getAdminContext() {
   const cookieStore = await cookies();
@@ -43,13 +44,7 @@ export default async function AdminPage() {
     supabase.from("Report").select("id, serviceId, status, reason, createdAt").order("createdAt", { ascending: false }).limit(20),
   ]);
 
-  const [
-    { count: pendingClaims },
-    { count: pendingReports },
-    { count: sources },
-    { count: verifications },
-    { count: qualitySnapshots },
-  ] = await Promise.all([
+  const [{ count: pendingClaims }, { count: pendingReports }, { count: sources }, { count: verifications }, { count: qualitySnapshots }] = await Promise.all([
     supabase.from("Claim").select("*", { count: "exact", head: true }).eq("status", "PENDING"),
     supabase.from("Report").select("*", { count: "exact", head: true }),
     supabase.from("DataSource").select("*", { count: "exact", head: true }),
@@ -121,8 +116,10 @@ export default async function AdminPage() {
           ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 20)}
         />
 
+        <VerificationPanel />
+
         <div className="mt-5 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm leading-7 text-amber-900">
-          <b>পরবর্তী workflow:</b> claim/report queue থেকে নির্দিষ্ট entity নির্বাচন করে evidence, verification level, moderation decision এবং audit note এক জায়গা থেকে পরিচালনা করা হবে।
+          <b>Workflow:</b> queue decision, evidence, verification level এবং audit history এখন Admin workflow-এর অংশ।
         </div>
       </section>
     </main>
