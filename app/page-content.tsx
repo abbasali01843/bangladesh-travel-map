@@ -38,7 +38,7 @@ export default function Home() {
     ["emergency", "জরুরি নম্বর"]
   ] as const, []);
 
-  const schools = [...data.education.secondary, ...data.education.madrasas, ...data.education.primary.map(name => ({ name, verified: false }))];
+  const schools: Array<{ name: string; verified?: boolean; eiin?: string | number }> = [...data.education.secondary, ...data.education.madrasas, ...data.education.primary.map(name => ({ name, verified: false }))];
   const filteredSchools = schools.filter((item) => item.name.includes(query));
   const globalResults = globalQuery.trim() ? data.search_index.filter((item) => item.name.includes(globalQuery.trim())).slice(0, 8) : [];
   useEffect(() => {
