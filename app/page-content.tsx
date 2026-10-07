@@ -59,7 +59,8 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f7f8f5] text-slate-900">\n      <PwaRegister />
+    <main className="min-h-screen bg-[#f7f8f5] text-slate-900">
+      <PwaRegister />
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-[#f7f8f5]/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <div>
@@ -76,7 +77,14 @@ export default function Home() {
             <Pill>{data.division} বিভাগ</Pill><Pill>{data.district} জেলা</Pill><Pill>{data.upazila} উপজেলা</Pill><Pill>৪নং ইউনিয়ন</Pill>
           </div>
           <h1 className="text-3xl font-black sm:text-5xl">{data.name}</h1>
-          <div className="relative mt-5 max-w-2xl">\n            <input value={globalQuery} onChange={(e) => setGlobalQuery(e.target.value)} placeholder="কাঞ্চনার গ্রাম, বাজার, স্কুল বা মাদ্রাসা খুঁজুন..." aria-label="কাঞ্চনা লোকাল সার্চ" className="w-full rounded-2xl border border-white/15 bg-white px-5 py-4 pr-12 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-400" />\n            {globalQuery && <button onClick={() => setGlobalQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full px-3 py-1 text-xs font-black text-slate-500 hover:bg-slate-100">মুছুন</button>}\n          </div>\n          {globalQuery && <div className="mt-2 max-w-2xl rounded-2xl bg-white p-2 text-slate-900 shadow-2xl">\n            {globalResults.length ? globalResults.map((item) => <button key={item.type + item.name} onClick={() => setGlobalQuery(item.name)} onClick={() => window.location.href = "/kanchana/" + item.slug} className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left hover:bg-slate-50"><span className="font-extrabold">{item.name}</span><span className="text-[10px] font-black text-slate-400">{item.type}{item.verified ? " · যাচাই" : " · পুনঃযাচাই"}</span></button>) : <div className="px-3 py-3 text-xs font-semibold text-slate-500">কোনো মিল পাওয়া যায়নি। অন্য নাম দিয়ে চেষ্টা করুন।</div>}\n          </div>}\n          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
+          <div className="relative mt-5 max-w-2xl">
+            <input value={globalQuery} onChange={(e) => setGlobalQuery(e.target.value)} placeholder="কাঞ্চনার গ্রাম, বাজার, স্কুল বা মাদ্রাসা খুঁজুন..." aria-label="কাঞ্চনা লোকাল সার্চ" className="w-full rounded-2xl border border-white/15 bg-white px-5 py-4 pr-12 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-400" />
+            {globalQuery && <button onClick={() => setGlobalQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full px-3 py-1 text-xs font-black text-slate-500 hover:bg-slate-100">মুছুন</button>}
+          </div>
+          {globalQuery && <div className="mt-2 max-w-2xl rounded-2xl bg-white p-2 text-slate-900 shadow-2xl">
+            {globalResults.length ? globalResults.map((item) => <button key={item.type + item.name} onClick={() => { window.location.href = "/kanchana/" + item.slug; }} className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left hover:bg-slate-50"><span className="font-extrabold">{item.name}</span><span className="text-[10px] font-black text-slate-400">{item.type}{item.verified ? " · যাচাই" : " · পুনঃযাচাই"}</span></button>) : <div className="px-3 py-3 text-xs font-semibold text-slate-500">কোনো মিল পাওয়া যায়নি। অন্য নাম দিয়ে চেষ্টা করুন।</div>}
+          </div>}
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
             গ্রাম, ওয়ার্ড, যাতায়াত, শিক্ষা, বাজার, দর্শনীয় স্থান ও জরুরি সেবা—এক জায়গায় সাজানো কাঞ্চনা পাইলট ডিরেক্টরি।
           </p>
           <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -88,7 +96,9 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-7xl px-4 pb-4 sm:px-6"><div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs font-semibold leading-6 text-amber-900">ℹ️ এই পাইলটের কিছু স্থানীয় তথ্য এখনও পুনঃযাচাই পর্যায়ে আছে। “পুনঃযাচাই বাকি” চিহ্নিত তথ্যকে চূড়ান্ত তথ্য হিসেবে ব্যবহার করবেন না।</div></div>\n\n      <nav className="mx-auto max-w-7xl overflow-x-auto px-4 pb-5 sm:px-6">
+      <div className="mx-auto max-w-7xl px-4 pb-4 sm:px-6"><div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs font-semibold leading-6 text-amber-900">ℹ️ এই পাইলটের কিছু স্থানীয় তথ্য এখনও পুনঃযাচাই পর্যায়ে আছে। “পুনঃযাচাই বাকি” চিহ্নিত তথ্যকে চূড়ান্ত তথ্য হিসেবে ব্যবহার করবেন না।</div></div>
+
+      <nav className="mx-auto max-w-7xl overflow-x-auto px-4 pb-5 sm:px-6">
         <div className="flex min-w-max gap-2">
           {tabs.map(([id, label]) => (
             <button key={id} onClick={() => setTab(id)} className={`rounded-full px-4 py-2.5 text-xs font-extrabold transition ${tab === id ? "bg-emerald-600 text-white" : "bg-white text-slate-600 border border-slate-200"}`}>{label}</button>
@@ -99,7 +109,10 @@ export default function Home() {
       <section className="mx-auto grid max-w-7xl gap-4 px-4 pb-12 sm:px-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
           {tab === "overview" && <>
-            <Section title="কাঞ্চনা ম্যাপ">\n              <KanchanaMap lat={data.map.center.lat} lng={data.map.center.lng} zoom={data.map.zoom} name={data.name} />\n            </Section>\n            <Section title="গ্রাম ও ওয়ার্ড" id="overview">
+            <Section title="কাঞ্চনা ম্যাপ">
+              <KanchanaMap lat={data.map.center.lat} lng={data.map.center.lng} zoom={data.map.zoom} name={data.name} />
+            </Section>
+            <Section title="গ্রাম ও ওয়ার্ড" id="overview">
               <div className="grid gap-3 sm:grid-cols-3">
                 {data.villages.map(v => <div key={v.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div className="font-black">{v.name}</div><div className="mt-2 flex flex-wrap gap-1.5">{v.wards.map(w => <Pill key={w}>ওয়ার্ড {String(w).padStart(2, "0")}</Pill>)}</div></div>)}
               </div>
