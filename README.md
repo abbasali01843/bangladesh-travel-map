@@ -1,25 +1,42 @@
-# Ghurechi 🇧🇩
+# বাংলাদেশ লোকাল ডিরেক্টরি 🇧🇩
 
-**বাংলাদেশের কতটা ঘুরে দেখেছেন?**
+বাংলাদেশের বিভাগ → জেলা → উপজেলা → ইউনিয়ন → গ্রাম পর্যায়ে স্থানীয় তথ্য এক জায়গায় আনার হাইপার-লোকাল ডিরেক্টরি।
 
-A standalone Bangladesh travel map and travel-progress sharing app.
+## বর্তমান পাইলট
+
+**কাঞ্চনা ইউনিয়ন, সাতকানিয়া, চট্টগ্রাম**
+
+পাইলটের লক্ষ্য হলো একটি ইউনিয়নের তথ্য আগে যতটা সম্ভব নির্ভুলভাবে যাচাই করা, তারপর একই কাঠামো সাতকানিয়া উপজেলা ও পরবর্তীতে পুরো বাংলাদেশে সম্প্রসারণ করা।
+
+## Data strategy
+
+- প্রতিটি প্রশাসনিক এলাকার জন্য is_published ফ্ল্যাগ থাকবে।
+- is_published: true হলে এলাকাটি ব্যবহারকারীর সামনে দৃশ্যমান হবে।
+- অসম্পূর্ণ এলাকার ডেটা ব্যাকএন্ড/ডেটা ফাইলে থাকতে পারবে কিন্তু প্রকাশিত UI-তে দেখানো হবে না।
+- বর্তমান কাঞ্চনা ডেটা: data/kanchana.json
+- প্রতিটি গুরুত্বপূর্ণ এন্ট্রিতে উৎস ও যাচাই-অবস্থা রাখা হচ্ছে।
 
 ## Stack
-- Next.js App Router
-- TypeScript
+
+- Next.js App Router + TypeScript
 - Tailwind CSS
-- PWA-ready
+- JSON-first data model
+- PWA manifest
+- ভবিষ্যৎ: Leaflet/OpenStreetMap, Supabase/PostgreSQL, crowd-sourcing
 
 ## Roadmap
-1. Full 64-district interactive SVG map
-2. Persistent local travel profile
-3. Shareable score card and challenge links
-4. Badges and travel levels
-5. Supabase social features
-6. District guides and trip planner
+
+1. কাঞ্চনা ইউনিয়ন পাইলট যাচাই সম্পূর্ণ
+2. সাতকানিয়ার ১৬টি ইউনিয়ন
+3. উপজেলা/জেলা স্তরের প্রশাসনিক structure
+4. user contribution + admin approval
+5. Supabase migration
+6. পুরো বাংলাদেশ
 
 ## Development
+
 ```bash
 npm install
 npm run dev
+npm run build
 ```
