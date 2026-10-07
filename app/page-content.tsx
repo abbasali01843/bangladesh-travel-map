@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import data from "../data/kanchana.json";
+import type { getKanchanaLiveData } from "../lib/kanchana-live";
+
+type KanchanaData = Awaited<ReturnType<typeof getKanchanaLiveData>>;
 import KanchanaMap from "./kanchana-map";
 import PwaRegister from "./pwa-register";
 
@@ -24,7 +26,7 @@ function Verified({ value }: { value?: boolean }) {
   return <span className={`rounded-full px-2 py-1 text-[10px] font-extrabold ${value ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{value ? "উৎস যাচাই" : "পুনঃযাচাই বাকি"}</span>;
 }
 
-export default function Home() {
+export default function Home({ data }: { data: KanchanaData }) {
   const [tab, setTab] = useState<Tab>("overview");
   const [query, setQuery] = useState("");
   const [globalQuery, setGlobalQuery] = useState("");
