@@ -37,7 +37,7 @@ export default function KanchanaMap({ lat, lng, zoom, name }: Props) {
     <div className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 shadow-sm">
       <div ref={mapRef} className="h-[360px] w-full sm:h-[430px]" aria-label={name + " map"} />
       <div className="border-t border-slate-200 bg-white px-4 py-3 text-[11px] font-semibold leading-5 text-slate-500">
-        ম্যাপটি ইউনিয়ন-লেভেল অবস্থান দেখায়; এটি ওয়ার্ড/গ্রাম সীমানার সরকারি boundary নয়।
+        ম্যাপটি ইউনিয়ন-লেভেল অবস্থান দেখায়; এটি ওয়ার্ড/গ্রাম সীমানার সরকারি boundary নয়। <a className="text-emerald-700 hover:underline" href="https://www.openstreetmap.org/fixthemap" target="_blank" rel="noreferrer">ম্যাপের ভুল রিপোর্ট করুন</a>
       </div>
     </div>
   );
