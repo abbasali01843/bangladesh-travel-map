@@ -1,7 +1,7 @@
 {
-  "name": "Ghurechi — Bangladesh Travel Map",
-  "short_name": "Ghurechi",
-  "description": "বাংলাদেশের ৬৪ জেলা কতটা ঘুরে দেখেছেন?",
+  "name": "বাংলাদেশ লোকাল ডিরেক্টরি",
+  "short_name": "লোকাল ডিরেক্টরি",
+  "description": "বাংলাদেশের ইউনিয়ন ও স্থানীয় এলাকার তথ্যভিত্তিক ডিরেক্টরি",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -9,5 +9,5 @@
   "background_color": "#f7f8f5",
   "theme_color": "#059669",
   "lang": "bn",
-  "categories": ["travel", "lifestyle"]
+  "categories": ["travel", "lifestyle", "education", "utilities"]
 }
