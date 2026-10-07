@@ -9,7 +9,7 @@
   "postal_code": "4386",
   "is_published": true,
   "pilot": true,
-  "verification_note": "পাইলট ভি-১। প্রশাসনিক কাঠামো, ওয়ার্ড/গ্রাম বিভাজন, সরকারি জরুরি নম্বর ও প্রধান বাজারের তথ্য প্রাথমিকভাবে সরকারি/প্রাতিষ্ঠানিক উৎস থেকে নেওয়া হয়েছে। শিক্ষা প্রতিষ্ঠানের পূর্ণ তালিকা স্থানীয়ভাবে cross-check করে final করা হবে।",
+  "verification_note": "পাইলট ভি-১। ৩টি গ্রাম এবং ৩টি মাধ্যমিক + ৩টি মাদ্রাসা + ৯টি প্রাথমিক প্রতিষ্ঠানের তালিকা একাধিক উৎসে সামঞ্জস্যপূর্ণ। যেসব স্থানীয় নাম/হটলাইন নিয়ে দ্বন্দ্ব আছে সেগুলো verified=false রাখা হয়েছে।",
   "villages": [
     {
       "id": "uttar-kanchana",
@@ -228,7 +228,8 @@
       "name": "দুর্যোগের আগাম বার্তা",
       "number": "102",
       "type": "দুর্যোগ তথ্য",
-      "verified": true
+      "verified": false,
+      "note": "102 is already used by Fire Service; disaster early-warning number must be re-verified before publication."
     }
   ],
   "sources": [
@@ -264,5 +265,13 @@
       "title": "কাঞ্চনা-সুঁইপুরা সড়ক — চট্টগ্রাম নিউজ",
       "url": "https://chattogramnews.com/archives/112275"
     }
-  ]
+  ],
+  "map": {
+    "center": {
+      "lat": 22.1071,
+      "lng": 92.0053
+    },
+    "zoom": 13,
+    "coordinate_note": "Union-level center only; sourced from a current Kanchana geographic listing. Do not treat this as a ward/village boundary."
+  }
 }
