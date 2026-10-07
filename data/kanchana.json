@@ -308,127 +308,127 @@
       "name": "উত্তর কাঞ্চনা",
       "type": "গ্রাম",
       "verified": true,
-      "slug": "উত-তর-ক-ঞ-চন"
+      "slug": "uttar-kanchana"
     },
     {
       "name": "মধ্য কাঞ্চনা",
       "type": "গ্রাম",
       "verified": true,
-      "slug": "মধ-য-ক-ঞ-চন"
+      "slug": "madhya-kanchana"
     },
     {
       "name": "দক্ষিণ কাঞ্চনা",
       "type": "গ্রাম",
       "verified": true,
-      "slug": "দক-ষ-ণ-ক-ঞ-চন"
+      "slug": "dakshin-kanchana"
     },
     {
       "name": "জোট পুকুরিয়া বাজার",
       "type": "বাজার",
       "verified": true,
-      "slug": "জ-ট-প-ক-র-য-ব-জ-র"
+      "slug": "jot-pukuria-bazar"
     },
     {
       "name": "মনু ফকির হাট",
       "type": "বাজার",
       "verified": true,
-      "slug": "মন-ফক-র-হ-ট"
+      "slug": "monu-fakir-haat"
     },
     {
       "name": "লতাপীরের বাজার",
       "type": "বাজার",
       "verified": false,
-      "slug": "লত-প-র-র-ব-জ-র"
+      "slug": "latapirer-bazar"
     },
     {
       "name": "কাঞ্চনা গার্লস হাই স্কুল",
       "type": "মাধ্যমিক",
       "verified": true,
-      "slug": "ক-ঞ-চন-গ-র-লস-হ-ই-স-ক-ল"
+      "slug": "kanchana-girls-high-school"
     },
     {
       "name": "দক্ষিণ কাঞ্চনা নুর আহমদ চৌধুরী উচ্চ বিদ্যালয়",
       "type": "মাধ্যমিক",
       "verified": true,
-      "slug": "দক-ষ-ণ-ক-ঞ-চন-ন-র-আহমদ-চ-ধ-র-উচ-চ-ব-দ-য-লয"
+      "slug": "dakshin-kanchana-nur-ahmad-chowdhury-high-school"
     },
     {
       "name": "আমিলাইশ কাঞ্চনা বংশী চন্দ্র ঘোষ ইনস্টিটিউট",
       "type": "মাধ্যমিক",
       "verified": false,
-      "slug": "আম-ল-ইশ-ক-ঞ-চন-ব-শ-চন-দ-র-ঘ-ষ-ইনস-ট-ট-উট"
+      "slug": "amilaish-kanchana-banshi-chandra-ghosh-institute"
     },
     {
       "name": "কাঞ্চনা আনোয়ারুল উলুম ইসলামিয়া সিনিয়র (আলিম) মাদ্রাসা",
       "type": "মাদ্রাসা",
       "verified": true,
-      "slug": "ক-ঞ-চন-আন-য-র-ল-উল-ম-ইসল-ম-য-স-ন-য-র-আল-ম-ম-দ-র-স"
+      "slug": "kanchana-anwarul-uloom-senior-madrasa"
     },
     {
       "name": "দক্ষিণ কাঞ্চনা শাহ রশিদিয়া ইসলামিয়া দাখিল মাদ্রাসা",
       "type": "মাদ্রাসা",
       "verified": true,
-      "slug": "দক-ষ-ণ-ক-ঞ-চন-শ-হ-রশ-দ-য-ইসল-ম-য-দ-খ-ল-ম-দ-র-স"
+      "slug": "dakshin-kanchana-shah-rashidia-madrasa"
     },
     {
       "name": "দারুল ইহসান মহিলা দাখিল মাদ্রাসা",
       "type": "মাদ্রাসা",
       "verified": true,
-      "slug": "দ-র-ল-ইহস-ন-মহ-ল-দ-খ-ল-ম-দ-র-স"
+      "slug": "darul-ihsan-mohila-dakhil-madrasa"
     },
     {
       "name": "উত্তর কাঞ্চনা কামাল উদ্দিন সরকারি প্রাথমিক বিদ্যালয়",
       "type": "প্রাথমিক",
       "verified": false,
-      "slug": "উত-তর-ক-ঞ-চন-ক-ম-ল-উদ-দ-ন-সরক-র-প-র-থম-ক-ব-দ-য-লয"
+      "slug": "uttar-kanchana-kamal-uddin-primary-school"
     },
     {
       "name": "উত্তর কাঞ্চনা সরকারি প্রাথমিক বিদ্যালয়",
       "type": "প্রাথমিক",
       "verified": false,
-      "slug": "উত-তর-ক-ঞ-চন-সরক-র-প-র-থম-ক-ব-দ-য-লয"
+      "slug": "uttar-kanchana-government-primary-school"
     },
     {
       "name": "কাঞ্চনা এ আই সরকারি প্রাথমিক বিদ্যালয়",
       "type": "প্রাথমিক",
       "verified": false,
-      "slug": "ক-ঞ-চন-এ-আই-সরক-র-প-র-থম-ক-ব-দ-য-লয"
+      "slug": "kanchana-ai-government-primary-school"
     },
     {
       "name": "কাঞ্চনা পালপাড়া সরকারি প্রাথমিক বিদ্যালয়",
       "type": "প্রাথমিক",
       "verified": false,
-      "slug": "ক-ঞ-চন-প-লপ-ড-সরক-র-প-র-থম-ক-ব-দ-য-লয"
+      "slug": "kanchana-palpara-government-primary-school"
     },
     {
       "name": "কাঞ্চনা গার্লস প্রাথমিক বিদ্যালয়",
       "type": "প্রাথমিক",
       "verified": false,
-      "slug": "ক-ঞ-চন-গ-র-লস-প-র-থম-ক-ব-দ-য-লয"
+      "slug": "kanchana-girls-primary-school"
     },
     {
       "name": "কাঞ্চনা সরকারি প্রাথমিক বিদ্যালয়",
       "type": "প্রাথমিক",
       "verified": false,
-      "slug": "ক-ঞ-চন-সরক-র-প-র-থম-ক-ব-দ-য-লয"
+      "slug": "kanchana-government-primary-school"
     },
     {
       "name": "দক্ষিণ কাঞ্চনা গুরগুরি সরকারি প্রাথমিক বিদ্যালয়",
       "type": "প্রাথমিক",
       "verified": false,
-      "slug": "দক-ষ-ণ-ক-ঞ-চন-গ-রগ-র-সরক-র-প-র-থম-ক-ব-দ-য-লয"
+      "slug": "dakshin-kanchana-gurguri-primary-school"
     },
     {
       "name": "বক্সিরখীল মডেল সরকারি প্রাথমিক বিদ্যালয়",
       "type": "প্রাথমিক",
       "verified": false,
-      "slug": "বক-স-রখ-ল-মড-ল-সরক-র-প-র-থম-ক-ব-দ-য-লয"
+      "slug": "bakshirjhil-model-primary-school"
     },
     {
       "name": "মধ্য কাঞ্চনা সরকারি প্রাথমিক বিদ্যালয়",
       "type": "প্রাথমিক",
       "verified": false,
-      "slug": "মধ-য-ক-ঞ-চন-সরক-র-প-র-থম-ক-ব-দ-য-লয"
+      "slug": "madhya-kanchana-government-primary-school"
     }
   ]
 }
