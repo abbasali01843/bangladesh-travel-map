@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import LogoutButton from "./logout-button";
+import ModerationQueue from "./moderation-queue";
 
 async function getAdminContext() {
   const cookieStore = await cookies();
@@ -36,6 +37,11 @@ function Card({ label, value, note }: { label: string; value: number; note: stri
 
 export default async function AdminPage() {
   const { supabase, user } = await getAdminContext();
+
+  const [{ data: claimRows }, { data: reportRows }] = await Promise.all([
+    supabase.from("Claim").select("id, serviceId, status, createdAt").eq("status", "PENDING").order("createdAt", { ascending: false }).limit(20),
+    supabase.from("Report").select("id, serviceId, status, reason, createdAt").order("createdAt", { ascending: false }).limit(20),
+  ]);
 
   const [
     { count: pendingClaims },
@@ -107,6 +113,13 @@ export default async function AdminPage() {
             </ul>
           </div>
         </div>
+
+        <ModerationQueue
+          initialItems={[
+            ...(claimRows ?? []).map((x) => ({ ...x, type: "CLAIM" as const, reason: null })),
+            ...(reportRows ?? []).map((x) => ({ ...x, type: "REPORT" as const })),
+          ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 20)}
+        />
 
         <div className="mt-5 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm leading-7 text-amber-900">
           <b>পরবর্তী workflow:</b> claim/report queue থেকে নির্দিষ্ট entity নির্বাচন করে evidence, verification level, moderation decision এবং audit note এক জায়গা থেকে পরিচালনা করা হবে।
