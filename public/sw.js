@@ -1,5 +1,5 @@
 const CACHE_NAME = "bd-local-directory-v1";
-const APP_SHELL = ["/", "/manifest.webmanifest"];
+const APP_SHELL = ["/", "/manifest.webmanifest", "/offline.html"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
