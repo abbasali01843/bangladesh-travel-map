@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import data from "../data/kanchana.json";
+import KanchanaMap from "./kanchana-map";
+import PwaRegister from "./pwa-register";
 
 type Tab = "overview" | "transport" | "education" | "markets" | "emergency";
 
@@ -38,7 +40,7 @@ export default function Home() {
   const filteredSchools = schools.filter((item) => item.name.includes(query));
 
   return (
-    <main className="min-h-screen bg-[#f7f8f5] text-slate-900">
+    <main className="min-h-screen bg-[#f7f8f5] text-slate-900">\n      <PwaRegister />
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-[#f7f8f5]/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <div>
@@ -78,7 +80,7 @@ export default function Home() {
       <section className="mx-auto grid max-w-7xl gap-4 px-4 pb-12 sm:px-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
           {tab === "overview" && <>
-            <Section title="গ্রাম ও ওয়ার্ড">
+            <Section title="কাঞ্চনা ম্যাপ">\n              <KanchanaMap lat={data.map.center.lat} lng={data.map.center.lng} zoom={data.map.zoom} name={data.name} />\n            </Section>\n            <Section title="গ্রাম ও ওয়ার্ড">
               <div className="grid gap-3 sm:grid-cols-3">
                 {data.villages.map(v => <div key={v.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div className="font-black">{v.name}</div><div className="mt-2 flex flex-wrap gap-1.5">{v.wards.map(w => <Pill key={w}>ওয়ার্ড {String(w).padStart(2, "0")}</Pill>)}</div></div>)}
               </div>
