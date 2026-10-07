@@ -21,20 +21,48 @@ export default function ModerationQueue({ initialItems }: { initialItems: Item[]
     setBusy(item.id);
     setMessage("");
     const supabase = createSupabaseBrowserClient();
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !authData.user) {
+      setMessage("Admin session পাওয়া যায়নি। আবার লগইন করুন।");
+      setBusy(null);
+      return;
+    }
+
     const table = item.type === "CLAIM" ? "Claim" : "Report";
     const { error } = await supabase
       .from(table)
-      .update(item.type === "CLAIM"
-        ? { status: nextStatus, reviewedAt: new Date().toISOString() }
-        : { status: nextStatus })
+      .update(
+        item.type === "CLAIM"
+          ? { status: nextStatus, reviewedAt: new Date().toISOString() }
+          : { status: nextStatus }
+      )
       .eq("id", item.id);
 
     if (error) {
       setMessage("পরিবর্তন করা যায়নি। RLS বা database permission পরীক্ষা করুন।");
-    } else {
-      setItems((current) => current.filter((x) => x.id !== item.id));
-      setMessage(nextStatus === "APPROVED" ? "অনুমোদন সম্পন্ন হয়েছে।" : "Reject সম্পন্ন হয়েছে।");
+      setBusy(null);
+      return;
     }
+
+    const { error: auditError } = await supabase.from("ModerationAction").insert({
+      entityType: item.type,
+      entityId: item.id,
+      action: nextStatus === "APPROVED" ? "APPROVE" : "REJECT",
+      fromStatus: item.status,
+      toStatus: nextStatus,
+      authActorId: authData.user.id,
+      note: item.reason ?? null,
+    });
+
+    setItems((current) => current.filter((x) => x.id !== item.id));
+    setMessage(
+      auditError
+        ? "মূল পরিবর্তন হয়েছে, কিন্তু audit record সংরক্ষণ করা যায়নি।"
+        : nextStatus === "APPROVED"
+          ? "অনুমোদন ও audit সম্পন্ন হয়েছে।"
+          : "Reject ও audit সম্পন্ন হয়েছে।"
+    );
     setBusy(null);
   }
 
