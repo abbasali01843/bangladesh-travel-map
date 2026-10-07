@@ -152,5 +152,5 @@ export async function getKanchanaLiveData(): Promise<SeedData> {
     verification_note: "এই পেজের প্রকাশযোগ্য service data এখন Supabase থেকে আসে। শুধু APPROVED এবং OFFICIAL/VERIFIED/COMMUNITY রেকর্ড public view-তে দেখানো হয়।",
   };
 
-  return next;
+  return next as SeedData;
 }
