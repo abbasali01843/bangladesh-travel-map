@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import data from "../data/kanchana.json";
 import KanchanaMap from "./kanchana-map";
 import PwaRegister from "./pwa-register";
@@ -41,6 +41,22 @@ export default function Home() {
   const schools = [...data.education.secondary, ...data.education.madrasas, ...data.education.primary.map(name => ({ name, verified: false }))];
   const filteredSchools = schools.filter((item) => item.name.includes(query));
   const globalResults = globalQuery.trim() ? data.search_index.filter((item) => item.name.includes(globalQuery.trim())).slice(0, 8) : [];
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("q");
+    if (q) setGlobalQuery(q);
+  }, []);
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (globalQuery.trim()) url.searchParams.set("q", globalQuery.trim());
+    else url.searchParams.delete("q");
+    window.history.replaceState({}, "", url);
+  }, [globalQuery]);
+  const selectSearchResult = (item: { name: string; type: string }) => {
+    setGlobalQuery(item.name);
+    const target = item.type === "বাজার" ? "markets" : item.type === "মাধ্যমিক" || item.type === "মাদ্রাসা" || item.type === "প্রাথমিক" ? "education" : item.type === "গ্রাম" ? "overview" : "places";
+    setTab(target as Tab);
+    window.setTimeout(() => document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+  };
 
   return (
     <main className="min-h-screen bg-[#f7f8f5] text-slate-900">\n      <PwaRegister />
@@ -60,7 +76,7 @@ export default function Home() {
             <Pill>{data.division} বিভাগ</Pill><Pill>{data.district} জেলা</Pill><Pill>{data.upazila} উপজেলা</Pill><Pill>৪নং ইউনিয়ন</Pill>
           </div>
           <h1 className="text-3xl font-black sm:text-5xl">{data.name}</h1>
-          <div className="relative mt-5 max-w-2xl">\n            <input value={globalQuery} onChange={(e) => setGlobalQuery(e.target.value)} placeholder="কাঞ্চনার গ্রাম, বাজার, স্কুল বা মাদ্রাসা খুঁজুন..." aria-label="কাঞ্চনা লোকাল সার্চ" className="w-full rounded-2xl border border-white/15 bg-white px-5 py-4 pr-12 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-400" />\n            {globalQuery && <button onClick={() => setGlobalQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full px-3 py-1 text-xs font-black text-slate-500 hover:bg-slate-100">মুছুন</button>}\n          </div>\n          {globalQuery && <div className="mt-2 max-w-2xl rounded-2xl bg-white p-2 text-slate-900 shadow-2xl">\n            {globalResults.length ? globalResults.map((item) => <button key={item.type + item.name} onClick={() => setGlobalQuery(item.name)} className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left hover:bg-slate-50"><span className="font-extrabold">{item.name}</span><span className="text-[10px] font-black text-slate-400">{item.type}{item.verified ? " · যাচাই" : " · পুনঃযাচাই"}</span></button>) : <div className="px-3 py-3 text-xs font-semibold text-slate-500">কোনো মিল পাওয়া যায়নি। অন্য নাম দিয়ে চেষ্টা করুন।</div>}\n          </div>}\n          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
+          <div className="relative mt-5 max-w-2xl">\n            <input value={globalQuery} onChange={(e) => setGlobalQuery(e.target.value)} placeholder="কাঞ্চনার গ্রাম, বাজার, স্কুল বা মাদ্রাসা খুঁজুন..." aria-label="কাঞ্চনা লোকাল সার্চ" className="w-full rounded-2xl border border-white/15 bg-white px-5 py-4 pr-12 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-400" />\n            {globalQuery && <button onClick={() => setGlobalQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full px-3 py-1 text-xs font-black text-slate-500 hover:bg-slate-100">মুছুন</button>}\n          </div>\n          {globalQuery && <div className="mt-2 max-w-2xl rounded-2xl bg-white p-2 text-slate-900 shadow-2xl">\n            {globalResults.length ? globalResults.map((item) => <button key={item.type + item.name} onClick={() => setGlobalQuery(item.name)} onClick={() => selectSearchResult(item)} className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left hover:bg-slate-50"><span className="font-extrabold">{item.name}</span><span className="text-[10px] font-black text-slate-400">{item.type}{item.verified ? " · যাচাই" : " · পুনঃযাচাই"}</span></button>) : <div className="px-3 py-3 text-xs font-semibold text-slate-500">কোনো মিল পাওয়া যায়নি। অন্য নাম দিয়ে চেষ্টা করুন।</div>}\n          </div>}\n          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
             গ্রাম, ওয়ার্ড, যাতায়াত, শিক্ষা, বাজার, দর্শনীয় স্থান ও জরুরি সেবা—এক জায়গায় সাজানো কাঞ্চনা পাইলট ডিরেক্টরি।
           </p>
           <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -83,7 +99,7 @@ export default function Home() {
       <section className="mx-auto grid max-w-7xl gap-4 px-4 pb-12 sm:px-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
           {tab === "overview" && <>
-            <Section title="কাঞ্চনা ম্যাপ">\n              <KanchanaMap lat={data.map.center.lat} lng={data.map.center.lng} zoom={data.map.zoom} name={data.name} />\n            </Section>\n            <Section title="গ্রাম ও ওয়ার্ড">
+            <Section title="কাঞ্চনা ম্যাপ">\n              <KanchanaMap lat={data.map.center.lat} lng={data.map.center.lng} zoom={data.map.zoom} name={data.name} />\n            </Section>\n            <Section title="গ্রাম ও ওয়ার্ড" id="overview">
               <div className="grid gap-3 sm:grid-cols-3">
                 {data.villages.map(v => <div key={v.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div className="font-black">{v.name}</div><div className="mt-2 flex flex-wrap gap-1.5">{v.wards.map(w => <Pill key={w}>ওয়ার্ড {String(w).padStart(2, "0")}</Pill>)}</div></div>)}
               </div>
@@ -97,7 +113,7 @@ export default function Home() {
             </Section>
           </>}
 
-          {tab === "transport" && <Section title="যাতায়াত ও প্রধান সড়ক">
+          {tab === "transport" && <Section title="যাতায়াত ও প্রধান সড়ক" id="transport">
             <div className="space-y-3">
               <div className="rounded-2xl bg-slate-50 p-4 text-sm leading-7 text-slate-600">{data.transport.upazila_hq}</div>
               {data.transport.main_roads.map((r) => <div key={r.name} className="rounded-2xl border border-slate-200 p-4"><div className="flex items-start justify-between gap-3"><div className="font-black">{r.name}</div><Verified value={r.verified}/></div>{r.note && <p className="mt-2 text-xs leading-6 text-slate-500">{r.note}</p>}</div>)}
@@ -105,7 +121,7 @@ export default function Home() {
             </div>
           </Section>}
 
-          {tab === "education" && <Section title="শিক্ষা প্রতিষ্ঠান">
+          {tab === "education" && <Section title="শিক্ষা প্রতিষ্ঠান" id="education">
             <div className="mb-4"><input value={query} onChange={e => setQuery(e.target.value)} placeholder="প্রতিষ্ঠানের নাম খুঁজুন..." className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"/></div>
             <div className="grid gap-2 sm:grid-cols-2">
               {filteredSchools.map((s, i) => <div key={i} className="rounded-2xl border border-slate-200 bg-white p-4"><div className="flex items-start justify-between gap-3"><div><div className="font-extrabold">{s.name}</div>{"eiin" in s && s.eiin && <div className="mt-1 text-[11px] font-bold text-slate-400">EIIN {s.eiin}</div>}</div><Verified value={"verified" in s ? s.verified : false}/></div></div>)}
@@ -113,13 +129,13 @@ export default function Home() {
             <div className="mt-4 rounded-2xl bg-amber-50 p-4 text-xs font-semibold leading-6 text-amber-800">{data.education.primary_verification}</div>
           </Section>}
 
-          {tab === "markets" && <Section title="হাট-বাজার">
+          {tab === "markets" && <Section title="হাট-বাজার" id="markets">
             <div className="grid gap-3 sm:grid-cols-3">
               {data.markets.map(m => <div key={m.name} className="rounded-2xl border border-slate-200 p-4"><div className="flex items-start justify-between gap-2"><div className="font-black">{m.name}</div><Verified value={m.verified}/></div><div className="mt-2 text-xs text-slate-400">{m.area}</div>{m.note && <p className="mt-2 text-xs leading-6 text-amber-700">{m.note}</p>}</div>)}
             </div>
           </Section>}
 
-          {tab === "places" && <Section title="স্থান ও লোকাল সেবা">
+          {tab === "places" && <Section title="স্থান ও লোকাল সেবা" id="places">
             <div className="space-y-5">
               <div>
                 <div className="mb-2 text-xs font-black text-slate-400">ধর্মীয় স্থান</div>
@@ -135,7 +151,7 @@ export default function Home() {
             </div>
           </Section>}
 
-          {tab === "emergency" && <Section title="জরুরি সেবা">
+          {tab === "emergency" && <Section title="জরুরি সেবা" id="emergency">
             <div className="grid gap-2 sm:grid-cols-2">
               {data.emergency_numbers.map(item => <a key={item.name + item.number} href={`tel:${item.number}`} className="rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-emerald-300"><div className="flex items-start justify-between gap-3"><div><div className="font-black">{item.name}</div><div className="mt-1 text-xs text-slate-400">{item.type}</div></div><div className="text-xl font-black text-emerald-600">{item.number}</div></div></a>)}
             </div>
