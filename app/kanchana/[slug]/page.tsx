@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import data from "../../../../data/kanchana";
+import data from "../../../data/kanchana.json";
 
 type Props = { params: Promise<{ slug: string }> };
 
