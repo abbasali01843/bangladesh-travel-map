@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "country": {
+    "id": "bd",
+    "name": "বাংলাদেশ",
+    "name_en": "Bangladesh",
+    "is_published": true
+  },
+  "divisions": [
+    {"id":"dhaka","name":"ঢাকা","name_en":"Dhaka","is_published":false},
+    {"id":"chattogram","name":"চট্টগ্রাম","name_en":"Chattogram","is_published":false},
+    {"id":"rajshahi","name":"রাজশাহী","name_en":"Rajshahi","is_published":false},
+    {"id":"khulna","name":"খুলনা","name_en":"Khulna","is_published":false},
+    {"id":"barishal","name":"বরিশাল","name_en":"Barishal","is_published":false},
+    {"id":"sylhet","name":"সিলেট","name_en":"Sylhet","is_published":false},
+    {"id":"rangpur","name":"রংপুর","name_en":"Rangpur","is_published":false},
+    {"id":"mymensingh","name":"ময়মনসিংহ","name_en":"Mymensingh","is_published":false}
+  ],
+  "districts": [],
+  "upazilas": [],
+  "unions": [
+    {
+      "id":"kanchana",
+      "name":"কাঞ্চনা ইউনিয়ন",
+      "name_en":"Kanchana Union",
+      "division_id":"chattogram",
+      "district_id":"chattogram",
+      "upazila_id":"satkania",
+      "union_no":4,
+      "data_file":"kanchana.json",
+      "is_published":true
+    }
+  ],
+  "villages": [],
+  "publishing_rule": {
+    "public_visibility": "Only records with is_published=true are rendered in public UI.",
+    "default": false,
+    "draft_data_allowed": true
+  }
+}
