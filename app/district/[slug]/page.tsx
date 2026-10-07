@@ -6,6 +6,7 @@ import { getDistrictDirectory } from "../../../lib/directory-live";
 export const revalidate = 3600;
 
 type Props = { params: Promise<{ slug: string }> };
+type UpazilaItem = { id: string; name: string; slug: string };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -37,7 +38,7 @@ export default async function DistrictPage({ params }: Props) {
         <section className="mt-5 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
           <h2 className="mb-4 text-lg font-black">উপজেলাসমূহ</h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {data.upazilas.map((item) => (
+            {data.upazilas.map((item: UpazilaItem) => (
               <Link key={item.id} href={"/upazila/" + item.slug} className="rounded-2xl border border-slate-200 p-4 hover:border-emerald-400 hover:bg-emerald-50">
                 <div className="font-black">{item.name}</div>
                 <div className="mt-1 text-xs text-slate-400">উপজেলা ডিরেক্টরি →</div>
