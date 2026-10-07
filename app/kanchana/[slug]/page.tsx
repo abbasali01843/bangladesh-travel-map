@@ -1,6 +1,6 @@
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import data from "../../../../data/kanchana.json";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -11,7 +11,7 @@ function findItem(slug: string) {
   return items.find((item) => item.slug === slug);
 }
 
-export async function generateStaticParams() {
+export function generateStaticParams() {
   return items.map((item) => ({ slug: item.slug }));
 }
 
@@ -30,10 +30,26 @@ export default async function LocalDetailPage({ params }: Props) {
   const item = findItem(slug);
   if (!item) notFound();
 
-  const jsonLd = { "@context": "https://schema.org", "@type": "Place", "name": item.name, "description": item.name + " — " + item.type + ", " + data.name + ", " + data.upazila + ", " + data.district, "address": { "@type": "PostalAddress", "addressLocality": data.upazila, "addressRegion": data.district, "addressCountry": "BD" } };\n\n  return (
-    <main className="min-h-screen bg-[#f7f8f5] text-slate-900">\n      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Place",
+    name: item.name,
+    description: item.name + " — " + item.type + ", " + data.name + ", " + data.upazila + ", " + data.district,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: data.upazila,
+      addressRegion: data.district,
+      addressCountry: "BD",
+    },
+  };
+
+  return (
+    <main className="min-h-screen bg-[#f7f8f5] text-slate-900">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-        <Link href="/" className="text-xs font-black text-emerald-700 hover:underline">← কাঞ্চনা ডিরেক্টরিতে ফিরে যান</Link>
+        <Link href="/" className="text-xs font-black text-emerald-700 hover:underline">
+          ← কাঞ্চনা ডিরেক্টরিতে ফিরে যান
+        </Link>
         <article className="mt-5 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <div className="flex flex-wrap gap-2">
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">{item.type}</span>
